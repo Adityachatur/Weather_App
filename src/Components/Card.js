@@ -61,19 +61,29 @@ const Card = () => {
       const { name } = data;
       const { speed } = data.wind;
       const { country, sunset } = data.sys;
-
+      const {sunrise} = data.sys;
+      
+      
       // Convert sunset time to 12-hour clock format
-      const sunsetDate = new Date(sunset * 1000);
-      const sunsetHours = sunsetDate.getHours();
-      const sunsetMinutes = sunsetDate.getMinutes();
-      const formattedSunsetTime = `${(sunsetHours % 12) || 12}:${sunsetMinutes < 10 ? '0' : ''}${sunsetMinutes} ${(sunsetHours >= 12) ? 'PM' : 'AM'}`;
+      const formatTime = (timestamp) => {
+        const date = new Date(timestamp * 1000);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const period = hours >= 12 ? 'PM' : 'AM';
+      
+        const formattedTime = `${(hours % 12) || 12}:${minutes < 10 ? '0' : ''}${minutes} ${period}`;
+        return formattedTime;
+      };
+      const formattedSunriseTime = formatTime(sunrise);
+      const formattedSunsetTime = formatTime(sunset);
 
 
       const Updateweatherdata = {
-        temp, humidity, pressure, Weathername, name, speed, country, sunset: formattedSunsetTime
+        temp, humidity, pressure, Weathername, name, speed, country, sunset: formattedSunsetTime,sunrise:formattedSunriseTime
       }
       setupdateweather(Updateweatherdata);
 
+      
     } catch (error) {
       console.log(error);
     }
@@ -115,7 +125,7 @@ const Card = () => {
 
 
   return (
-    <>
+    <div className='all-contain'>
       <div className="Heading">
         <h1>Weather App</h1>
       </div>
@@ -159,6 +169,12 @@ const Card = () => {
             </div>
             <div className="two-side-info">
               <div className="extra-info-icon">
+                <FontAwesomeIcon icon={faSun} style={{ fontSize: "40px" }} />
+              </div>
+              <p>{updateweather.sunrise} <br /><span>Sunrise</span></p>
+            </div>
+            <div className="two-side-info">
+              <div className="extra-info-icon">
                 <FontAwesomeIcon icon={faPercent} style={{ fontSize: "40px" }} />
               </div>
               <p>{updateweather.humidity} (%)<br /><span>Humidity</span></p>
@@ -176,7 +192,7 @@ const Card = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
